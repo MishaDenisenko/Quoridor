@@ -86,22 +86,18 @@ public class GameController : MonoBehaviour {
             FirstOutlineObjects(Player.SecondPlayer);
             _secondPlayerActive = false;
         } else if (!_firstMoveP1 && _player == 1 && _firstPlayerActive) {
-            _enemyPosition = _playerPosition;
-            _playerPosition = CheckPlayerPosition(Player.FirstPlayer);
-            _nearVertices = GetNearVertices(_playerPosition, _enemyPosition);
+            _nearVertices = NearVertices.GetNearVertices();
             _firstPlayerActive = false;
         } else if (!_firstMoveP2 && _player == 2 && _secondPlayerActive) {
-            _enemyPosition = _playerPosition;
-            _playerPosition = CheckPlayerPosition(Player.SecondPlayer);
-            _nearVertices = GetNearVertices(_playerPosition, _enemyPosition);
+            _nearVertices = NearVertices.GetNearVertices();
             _secondPlayerActive = false;
         }
         if (!_firstMoveP1 && !_firstMoveP2 && !_isOutlinedNearVertices) {
             foreach (GameObject vertex in _allVertices) {
-                vertex.GetComponent<Outline>().enabled = false;
+                if (vertex) vertex.GetComponent<Outline>().enabled = false;
             }
             foreach (GameObject nearVertex in _nearVertices) {
-                nearVertex.GetComponent<Outline>().enabled = true;
+                if (nearVertex) nearVertex.GetComponent<Outline>().enabled = true;
             }
             _isOutlinedNearVertices = true;
         }
@@ -185,64 +181,6 @@ public class GameController : MonoBehaviour {
         MovePlates.MovePlate = true;
     }
 
-    private GameObject[] GetNearVertices(int[] playerPosition, int[] enemyPosition) {
-        int countOfVertices;
-
-        if (playerPosition[0] == 1 && playerPosition[1] == 1 || playerPosition[0] == 9 && playerPosition[1] == 1 ||
-            playerPosition[0] == 1 && playerPosition[1] == 9 || playerPosition[0] == 9 && playerPosition[1] == 9) countOfVertices = 2;
-
-        else if (playerPosition[0] == 1 || playerPosition[0] == 9 || playerPosition[1] == 1 || playerPosition[1] == 9) countOfVertices = 3;
-
-        else countOfVertices = 4;
-
-        GameObject[] nearVertices = new GameObject[countOfVertices];
-
-        switch (countOfVertices) {
-            case 2:
-                if (playerPosition[0] == 1 && playerPosition[1] == 1) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                } else if (playerPosition[0] == 9 && playerPosition[1] == 1) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                } else if (playerPosition[0] == 1 && playerPosition[1] == 9) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                } else if (playerPosition[0] == 9 && playerPosition[1] == 9) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                }
-                break;
-            case 3:
-                if (playerPosition[0] == 1) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                    nearVertices[2] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                } else if (playerPosition[0] == 9) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                    nearVertices[2] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                } else if (playerPosition[1] == 1) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                    nearVertices[2] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                } else if (playerPosition[1] == 9) {
-                    nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                    nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                    nearVertices[2] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                }
-                break;
-            case 4:
-                nearVertices[0] = GameObject.Find($"Vertex {playerPosition[0] + 1}{playerPosition[1]}");
-                nearVertices[1] = GameObject.Find($"Vertex {playerPosition[0] - 1}{playerPosition[1]}");
-                nearVertices[2] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] + 1}");
-                nearVertices[3] = GameObject.Find($"Vertex {playerPosition[0]}{playerPosition[1] - 1}");
-                break;
-        }
-
-        return nearVertices;
-    }
-
     private void MakeAMove(Player player, RaycastHit hit) {
         
         Vector3 hitPos;
@@ -254,6 +192,8 @@ public class GameController : MonoBehaviour {
                 _activeVertex = hit.collider.gameObject;
                 hitPos = _activeVertex.transform.position;
                 player1.transform.position = new Vector3(hitPos.x, playerPosY, hitPos.z);
+                NearVertices.EnemyPosition = CheckPlayerPosition(Player.FirstPlayer);
+                NearVertices.PlayerPosition = CheckPlayerPosition(Player.SecondPlayer);
                 ActivePlayer(Player.SecondPlayer);
                 if (_firstMoveP1) _firstMoveP1 = false;
                 break;
@@ -264,7 +204,8 @@ public class GameController : MonoBehaviour {
                 _activeVertex = hit.collider.gameObject;
                 hitPos = _activeVertex.transform.position;
                 player2.transform.position = new Vector3(hitPos.x, playerPosY, hitPos.z);
-                // _player = 1;
+                NearVertices.EnemyPosition = CheckPlayerPosition(Player.SecondPlayer);
+                NearVertices.PlayerPosition = CheckPlayerPosition(Player.FirstPlayer);
                 ActivePlayer(Player.FirstPlayer);
                 if (_firstMoveP2) _firstMoveP2 = false;
                 break;
