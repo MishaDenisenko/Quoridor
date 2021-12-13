@@ -41,8 +41,6 @@ public class GameController : MonoBehaviour {
     private bool _isOptimalCount;
 
     private int _player;
-    private int[] _playerPosition = new int[2];
-    private int[] _enemyPosition = new int[2];
 
     private Camera _mainCamera;
 

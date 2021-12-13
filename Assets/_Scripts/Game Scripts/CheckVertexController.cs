@@ -83,34 +83,6 @@ public class CheckVertexController : MonoBehaviour {
     
         verticesNumbers[3][0] = PlayerPosition[0];
         verticesNumbers[3][1] = PlayerPosition[1] + (int) Player;
-        // switch (player) {
-        //     case PlayerInitial.First:
-        //         verticesNumbers[0][0] = PlayerPosition[0] + 1; // forward
-        //         verticesNumbers[0][1] = PlayerPosition[1];
-        //
-        //         verticesNumbers[1][0] = PlayerPosition[0] - 1; // back
-        //         verticesNumbers[1][1] = PlayerPosition[1];
-        //
-        //         verticesNumbers[2][0] = PlayerPosition[0];
-        //         verticesNumbers[2][1] = PlayerPosition[1] - 1; // right
-        //
-        //         verticesNumbers[3][0] = PlayerPosition[0];
-        //         verticesNumbers[3][1] = PlayerPosition[1] + 1; // left
-        //         break;
-        //     case PlayerInitial.Second:
-        //         verticesNumbers[0][0] = PlayerPosition[0] - 1; // forward
-        //         verticesNumbers[0][1] = PlayerPosition[1];
-        //
-        //         verticesNumbers[1][0] = PlayerPosition[0] + 1; // back
-        //         verticesNumbers[1][1] = PlayerPosition[1];
-        //
-        //         verticesNumbers[2][0] = PlayerPosition[0];
-        //         verticesNumbers[2][1] = PlayerPosition[1] + 1; // right
-        //
-        //         verticesNumbers[3][0] = PlayerPosition[0];
-        //         verticesNumbers[3][1] = PlayerPosition[1] - 1; // left
-        //         break;
-        // }
 
         CheckVertex(ref verticesNumbers);
             
