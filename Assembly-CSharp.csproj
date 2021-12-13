@@ -58,11 +58,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\_Scripts\Game Scripts\CheckVertexController.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\GameController.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\LoseController.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\MovePlates.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\MovePlayer.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\NearVertices.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\Outline.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\PathFinder.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\PlateController.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\PlateIntersections.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\PlatesCountController.cs" />
+     <Compile Include="Assets\_Scripts\Game Scripts\Vertex.cs" />
      <Compile Include="Assets\_Scripts\Lobby Scripts\CanvasButtons.cs" />
      <Compile Include="Assets\_Scripts\Lobby Scripts\Fading.cs" />
      <Compile Include="Assets\_Scripts\OrientationSetter.cs" />

@@ -36,6 +36,7 @@ public class MovePlates : MonoBehaviour {
                 _color = _bufflePlate.GetComponentInChildren<Renderer>().material.color;
                 _bufflePlate.transform.GetChild(0).GetComponent<Renderer>().material.color = new Color(_color.r, _color.g, _color.b, 0.5f);
                 _isCreate = true;
+                _bufflePlate.transform.GetComponent<PlateController>().IsPaste = false;
             }
 
             _targetPos = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -46,12 +47,15 @@ public class MovePlates : MonoBehaviour {
                     new Vector3(_targetPos.x, bufflePlatePosition.y, _targetPos.z), step);
 
                 if (Input.GetMouseButtonDown(0) && PlateController.Position) {
-                    _bufflePlate.transform.position =  PlateController.Position.transform.position;
+                    Vector3 colPosition = PlateController.Position.transform.position;
+                    _bufflePlate.transform.position = new Vector3(colPosition.x, colPosition.y + 0.15f, colPosition.z) ;
                     _bufflePlate.transform.GetChild(0).GetComponent<Renderer>().material.color = new Color(_color.r, _color.g, _color.b, 1f);
-                    _movePlate = false;
-                    _isCreate = false;
+                    _bufflePlate.transform.GetComponent<PlateController>().IsPaste = true;
+                    _bufflePlate.transform.GetComponent<PlateController>().enabled = false;
                     PlateController.Position = null;
                     GameController.PlateInstalled = true;
+                    _movePlate = false;
+                    _isCreate = false;
                 }
             }
 
