@@ -109,7 +109,6 @@ public class CheckVertexController : MonoBehaviour {
         RaycastHit hit;
         foreach (Vector3 direction in directions) {
             Ray ray = new Ray(_rayPosition, direction);
-            // if (Physics.Raycast(ray, out hit, rayLength)) print(hit.collider.tag);
             if (Physics.Raycast(ray, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                 if (direction == forward) {
                     verticesNumbers[0][0] = 0;
@@ -127,7 +126,6 @@ public class CheckVertexController : MonoBehaviour {
                     verticesNumbers[3][0] = 0;
                     verticesNumbers[3][1] = 0;
                 }
-                print(4);
             }
             else if (Physics.Raycast(ray, out hit, rayLength) && hit.collider.tag.Equals("Player")) {
                 Vector3 position = hit.transform.position;
@@ -140,29 +138,19 @@ public class CheckVertexController : MonoBehaviour {
                         if (Physics.Raycast(rayL, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[0][0] = 0;
                             verticesNumbers[0][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[0][1] += 1;
-                            } else {
-                                verticesNumbers[0][1] -= 1;
-                            }
-                        }
+                        } 
+                        else verticesNumbers[0][1] += (int) Player;
+                            
                         if (Physics.Raycast(rayR, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[4][0] = 0;
                             verticesNumbers[4][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[4][0] = PlayerPosition[0] + 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] - 1;
-                            } else {
-                                verticesNumbers[4][0] = PlayerPosition[0] - 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] + 1;
-                            }
+                        } 
+                        else {
+                            verticesNumbers[4][0] = PlayerPosition[0] + (int) Player;
+                            verticesNumbers[4][1] = PlayerPosition[1] - (int) Player;
                         }
-                    } else {
-                        if (player == PlayerInitial.First) verticesNumbers[0][0] += 1;
-                        else verticesNumbers[0][0] -= 1;
-                    }
+                    } 
+                    else verticesNumbers[0][0] += (int) Player;
                 }
                 
                 // bck
@@ -175,28 +163,17 @@ public class CheckVertexController : MonoBehaviour {
                         if (Physics.Raycast(rayL, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[1][0] = 0;
                             verticesNumbers[1][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[1][1] += 1;
-                            } else {
-                                verticesNumbers[0][1] -= 1;
-                            }
-                        }
+                        } 
+                        else verticesNumbers[1][1] += (int) Player;
+                            
                         if (Physics.Raycast(rayR, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[4][0] = 0;
                             verticesNumbers[4][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[4][1] = PlayerPosition[1] - 1;
-                            } else {
-                                verticesNumbers[0][1] = PlayerPosition[1] + 1;
-                            }
-                        }
-                    } else {
-                        if (player == PlayerInitial.First) verticesNumbers[1][0] -= 1;
-                        else verticesNumbers[1][0] += 1;
+                        } 
+                        else verticesNumbers[4][1] = PlayerPosition[1] - (int) Player;
                         
-                    }
+                    } 
+                    else verticesNumbers[1][0] -= (int) Player;
                 }
                 
                 // rgh
@@ -209,29 +186,19 @@ public class CheckVertexController : MonoBehaviour {
                         if (Physics.Raycast(rayB, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[2][0] = 0;
                             verticesNumbers[2][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[2][0] -= 1;
-                            } else {
-                                verticesNumbers[2][0] += 1;
-                            }
-                        }
+                        } 
+                        else verticesNumbers[2][0] -= (int) Player;
+                        
                         if (Physics.Raycast(rayF, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[4][0] = 0;
                             verticesNumbers[4][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[4][0] = PlayerPosition[0] + 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] - 1;
-                            } else {
-                                verticesNumbers[4][0] = PlayerPosition[0] - 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] + 1;
-                            }
+                        } 
+                        else {
+                            verticesNumbers[4][0] = PlayerPosition[0] + (int) Player;
+                            verticesNumbers[4][1] = PlayerPosition[1] - (int) Player;
                         }
-                    } else {
-                        if (player == PlayerInitial.First) verticesNumbers[2][1] -= 1;
-                        else verticesNumbers[2][1] += 1;
-                    }
+                    } 
+                    else verticesNumbers[2][1] -= (int) Player;
                 }
                 
                 // lft
@@ -244,29 +211,19 @@ public class CheckVertexController : MonoBehaviour {
                         if (Physics.Raycast(rayB, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[2][0] = 0;
                             verticesNumbers[2][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[2][0] -= 1;
-                            } else {
-                                verticesNumbers[2][0] += 1;
-                            }
-                        }
+                        } 
+                        else verticesNumbers[2][0] -= (int) Player;
+                        
                         if (Physics.Raycast(rayF, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                             verticesNumbers[4][0] = 0;
                             verticesNumbers[4][1] = 0;
-                        } else {
-                            if (player == PlayerInitial.First) {
-                                verticesNumbers[4][0] = PlayerPosition[0] + 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] + 1;
-                            } else {
-                                verticesNumbers[4][0] = PlayerPosition[0] - 1;
-                                verticesNumbers[4][1] = PlayerPosition[1] - 1;
-                            }
+                        } 
+                        else {
+                            verticesNumbers[4][0] = PlayerPosition[0] + (int) Player;
+                            verticesNumbers[4][1] = PlayerPosition[1] + (int) Player;
                         }
-                    } else {
-                        if (player == PlayerInitial.First) verticesNumbers[3][1] += 1;
-                        else verticesNumbers[3][1] -= 1;
-                    }
+                    } 
+                    else verticesNumbers[3][1] += (int) Player;
                 }
             }
         }

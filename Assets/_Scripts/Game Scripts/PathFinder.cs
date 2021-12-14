@@ -66,7 +66,6 @@ public class PathFinder : MonoBehaviour {
     private bool IsPath(GameObject currentVertex) {
         bool isWay = true;
         bool isRecursive = false;
-        print(player);
         List<Vertex> passedVertices = new List<Vertex>();
         Vertex vertex;
         int index = 0;
