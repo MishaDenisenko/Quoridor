@@ -18,7 +18,7 @@ public class PlatesCountController : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) ChangeCount();
+        if (Input.GetMouseButtonDown(0) && !WinController.IsWin) ChangeCount();
     }
 
     private void ChangeCount() {

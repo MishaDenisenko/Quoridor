@@ -74,6 +74,8 @@ public class GameController : MonoBehaviour {
                 j++;
             }
         }
+        plates1.transform.GetChild(1).gameObject.SetActive(true);
+        WinController.IsWin = false;
     }
     
     //[0] - x ; [1] - y
@@ -87,71 +89,73 @@ public class GameController : MonoBehaviour {
             _plateInstalled = false;
         }
 
-        if (_firstMoveP1 && _player == 1 && _firstPlayerActive) {
-            FirstOutlineObjects(Player.FirstPlayer);
-            _nearVertices = _firstRowPlayer1;
-            _firstPlayerActive = false;
-        } else if (_firstMoveP2 && _player == 2 && _secondPlayerActive) {
-            FirstOutlineObjects(Player.SecondPlayer);
-            _nearVertices = _firstRowPlayer2;
-            _secondPlayerActive = false;
-        } else if (!_firstMoveP1 && _player == 1 && _firstPlayerActive) {
-            _nearVertices = player1.GetComponent<CheckVertexController>().GetNearVertices();
-            Opponent = Player.SecondPlayer;
-            _firstPlayerActive = false;
-        } else if (!_firstMoveP2 && _player == 2 && _secondPlayerActive) {
-            _nearVertices = player2.GetComponent<CheckVertexController>().GetNearVertices();
-            Opponent = Player.FirstPlayer;
-            _secondPlayerActive = false;
-        }
-        if (_nearVertices != null && !_isOutlinedNearVertices) {
-            foreach (GameObject vertex in _allVertices) {
-                if (vertex) vertex.GetComponent<Outline>().enabled = false;
+        if (!WinController.IsWin) {
+            if (_firstMoveP1 && _player == 1 && _firstPlayerActive) {
+                FirstOutlineObjects(Player.FirstPlayer);
+                _nearVertices = _firstRowPlayer1;
+                _firstPlayerActive = false;
+            } else if (_firstMoveP2 && _player == 2 && _secondPlayerActive) {
+                FirstOutlineObjects(Player.SecondPlayer);
+                _nearVertices = _firstRowPlayer2;
+                _secondPlayerActive = false;
+            } else if (!_firstMoveP1 && _player == 1 && _firstPlayerActive) {
+                _nearVertices = player1.GetComponent<CheckVertexController>().GetNearVertices();
+                Opponent = Player.SecondPlayer;
+                _firstPlayerActive = false;
+            } else if (!_firstMoveP2 && _player == 2 && _secondPlayerActive) {
+                _nearVertices = player2.GetComponent<CheckVertexController>().GetNearVertices();
+                Opponent = Player.FirstPlayer;
+                _secondPlayerActive = false;
             }
-            foreach (GameObject nearVertex in _nearVertices) {
-                if (nearVertex) nearVertex.GetComponent<Outline>().enabled = true;
+            if (_nearVertices != null && !_isOutlinedNearVertices) {
+                foreach (GameObject vertex in _allVertices) {
+                    if (vertex) vertex.GetComponent<Outline>().enabled = false;
+                }
+                foreach (GameObject nearVertex in _nearVertices) {
+                    if (nearVertex) nearVertex.GetComponent<Outline>().enabled = true;
+                }
+                _isOutlinedNearVertices = true;
             }
-            _isOutlinedNearVertices = true;
+
+            if (_activeVertex && !_isDecayed) {
+                bool activeVertexOutlined = _activeVertex.GetComponent<Outline>().enabled;
+
+                if (!activeVertexOutlined) {
+                    _activeVertex.GetComponent<Outline>().enabled = true;
+                    _activeVertex.GetComponent<Outline>().OutlineWidth = 20;
+                } else if (_activeVertex.GetComponent<Outline>().OutlineWidth < decayRate / 5) {
+                    _activeVertex.GetComponent<Outline>().enabled = false;
+                    _isDecayed = true;
+                } else _activeVertex.GetComponent<Outline>().OutlineWidth -= decayRate * Time.deltaTime;
+            }
+
+            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 100) && !MovePlates.MovePlate) {
+                GameObject objectInFocus = hit.collider.gameObject;
+                GameObject[] currentOutlinedObjects = new GameObject[11];
+                switch (_player) {
+                    case 1:
+                        currentOutlinedObjects = CurrentOutlinedObjects(Player.FirstPlayer, _firstMoveP1);
+                        break;
+                    case 2:
+                        currentOutlinedObjects = CurrentOutlinedObjects(Player.SecondPlayer, _firstMoveP2);
+                        break;
+                }
+                ChangeOutline(currentOutlinedObjects, objectInFocus);
+            }
+
+            if (Input.GetMouseButtonDown(0) && !MovePlates.MovePlate) {
+                if (_player == 1 && _firstMoveP1) CreateSecondReaycast(Player.FirstPlayer, _firstRowPlayer1);
+                else if (_player == 2 && _firstMoveP2) CreateSecondReaycast(Player.SecondPlayer, _firstRowPlayer2);
+                else {
+                    if (_player == 1) CreateSecondReaycast(Player.FirstPlayer, _nearVertices);
+                    else if (_player == 2) CreateSecondReaycast(Player.SecondPlayer, _nearVertices);
+                }
+            }
         }
         
-        if (_activeVertex && !_isDecayed) {
-            bool activeVertexOutlined = _activeVertex.GetComponent<Outline>().enabled;
-            
-            if (!activeVertexOutlined) {
-                _activeVertex.GetComponent<Outline>().enabled = true;
-                _activeVertex.GetComponent<Outline>().OutlineWidth = 20;
-            }
-            else if (_activeVertex.GetComponent<Outline>().OutlineWidth < decayRate/5) {
-                _activeVertex.GetComponent<Outline>().enabled = false;
-                _isDecayed = true;
-            } else _activeVertex.GetComponent<Outline>().OutlineWidth -= decayRate * Time.deltaTime;
-        }
-
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 100) && !MovePlates.MovePlate) {
-            GameObject objectInFocus = hit.collider.gameObject;
-            GameObject[] currentOutlinedObjects = new GameObject[11];
-            switch (_player) {
-                case 1:
-                    currentOutlinedObjects = CurrentOutlinedObjects(Player.FirstPlayer, _firstMoveP1);
-                    break;
-                case 2:
-                    currentOutlinedObjects = CurrentOutlinedObjects(Player.SecondPlayer, _firstMoveP2);
-                    break;
-            }
-            ChangeOutline(currentOutlinedObjects, objectInFocus);
-        }
-
-        if (Input.GetMouseButtonDown(0) && !MovePlates.MovePlate) {
-            if (_player == 1 && _firstMoveP1) CreateSecondReaycast(Player.FirstPlayer, _firstRowPlayer1);
-            else if (_player == 2 && _firstMoveP2) CreateSecondReaycast(Player.SecondPlayer, _firstRowPlayer2); 
-            else {
-                if (_player == 1) CreateSecondReaycast(Player.FirstPlayer, _nearVertices);
-                else if (_player == 2) CreateSecondReaycast(Player.SecondPlayer, _nearVertices);
-            }
-        }
     }
 
     private void CreateSecondReaycast(Player player, GameObject[] vertices) {
@@ -309,45 +313,7 @@ public class GameController : MonoBehaviour {
                 break;
         }
     }
-
-    // private int[] CheckPlayerPosition(Player player) {
-    //     int[] position = new int[2];
-    //     Vector3 playerPos;
-    //     Vector3 vertexPos;
-    //     
-    //     switch (player) {
-    //         case Player.FirstPlayer:
-    //             playerPos = player1.transform.position;
-    //             for (int i = 0; i < 9; i++) {
-    //                 for (int j = 0; j < 9; j++) {
-    //                     vertexPos = tops.transform.GetChild(i).GetChild(j).position;
-    //                     if (playerPos.x >= vertexPos.x - 0.01 && playerPos.x <= vertexPos.x + 0.01 &&
-    //                         playerPos.z >= vertexPos.z - 0.01 && playerPos.z <= vertexPos.z + 0.01) {
-    //                         String nameOfVertex = tops.transform.GetChild(i).GetChild(j).name.Substring(7);
-    //                         position[0] = Int32.Parse(nameOfVertex[0].ToString());
-    //                         position[1] = Int32.Parse(nameOfVertex[1].ToString());
-    //                     }
-    //                 }
-    //             }
-    //             break;
-    //         case Player.SecondPlayer:
-    //             playerPos = player2.transform.position;
-    //             for (int i = 0; i < 9; i++) {
-    //                 for (int j = 0; j < 9; j++) {
-    //                     vertexPos = tops.transform.GetChild(i).GetChild(j).position;
-    //                     if (playerPos.x >= vertexPos.x - 0.01 && playerPos.x <= vertexPos.x + 0.01 &&
-    //                         playerPos.z >= vertexPos.z - 0.01 && playerPos.z <= vertexPos.z + 0.01) {
-    //                         String nameOfVertex = tops.transform.GetChild(i).GetChild(j).name.Substring(7);
-    //                         position[0] = Int32.Parse(nameOfVertex[0].ToString());
-    //                         position[1] = Int32.Parse(nameOfVertex[1].ToString());
-    //                     }
-    //                 }
-    //             }
-    //             break;
-    //     }
-    //     return position;
-    // }
-
+    
     private GameObject[] CurrentOutlinedObjects(Player player, bool firstMove) {
         int countOfObjects;
 
