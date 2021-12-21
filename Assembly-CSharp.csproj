@@ -58,6 +58,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\BotController.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\BotOrPlayer.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\ChoosePlayer.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\Constants.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\GameController.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\MatchController.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\OutlineManager.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\PlayerController.cs" />
+     <Compile Include="Assets\_Scripts\Bot Scene Scripts\ShortestPath.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\CheckVertexController.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\GameController.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\MovePlates.cs" />
@@ -69,6 +78,7 @@
      <Compile Include="Assets\_Scripts\Game Scripts\Vertex.cs" />
      <Compile Include="Assets\_Scripts\Game Scripts\WinController.cs" />
      <Compile Include="Assets\_Scripts\Lobby Scripts\CanvasButtons.cs" />
+     <Compile Include="Assets\_Scripts\Lobby Scripts\CheckBotButton.cs" />
      <Compile Include="Assets\_Scripts\Lobby Scripts\Fading.cs" />
      <Compile Include="Assets\_Scripts\OrientationSetter.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

@@ -99,13 +99,15 @@ public class PathFinder : MonoBehaviour {
             foreach (Vector3 direction in directions) {
                 ray = new Ray(_rayPosition, direction);
                 Vector3 pos = Vector3.zero;
-                if (direction.Equals(forward) && !Physics.Raycast(ray, out hit, rayLength)) 
+                bool isHit = Physics.Raycast(ray, out hit, rayLength);
+                bool isPlayer = hit.collider ? hit.collider.tag.Equals("Player") : false;
+                if (direction.Equals(forward) && (!isHit || isPlayer)) 
                     pos = new Vector3(position.x, position.y + height, position.z + rayLength * (int) player);
-                else if (direction.Equals(right) && !Physics.Raycast(ray, out hit, rayLength)) 
+                else if (direction.Equals(right) && (!isHit || isPlayer)) 
                     pos = new Vector3(position.x + rayLength * (int) player, position.y + height, position.z);
-                else if (direction.Equals(left) && !Physics.Raycast(ray, out hit, rayLength)) 
+                else if (direction.Equals(left) && (!isHit || isPlayer)) 
                     pos = new Vector3(position.x - rayLength * (int) player, position.y + height, position.z);
-                else if (direction.Equals(back) && !Physics.Raycast(ray, out hit, rayLength)) 
+                else if (direction.Equals(back) && (!isHit || isPlayer)) 
                     pos = new Vector3(position.x, position.y + height, position.z - rayLength * (int) player);
 
                 if (pos != Vector3.zero) {
@@ -124,13 +126,15 @@ public class PathFinder : MonoBehaviour {
                 foreach (Vector3 direction in vertex.Directions) {
                     ray = new Ray(_rayPosition, direction);
                     Vector3 pos = Vector3.zero;
-                    if (direction.Equals(forward) && !Physics.Raycast(ray, out hit, rayLength)) 
+                    bool isHit = Physics.Raycast(ray, out hit, rayLength);
+                    bool isPlayer = hit.collider ? hit.collider.tag.Equals("Player") : false;
+                    if (direction.Equals(forward) && (!isHit || isPlayer)) 
                         pos = new Vector3(position.x, position.y + height, position.z + rayLength * (int) player);
-                    else if (direction.Equals(right) && !Physics.Raycast(ray, out hit, rayLength)) 
+                    else if (direction.Equals(right) && (!isHit || isPlayer)) 
                         pos = new Vector3(position.x + rayLength * (int) player, position.y + height, position.z);
-                    else if (direction.Equals(left) && !Physics.Raycast(ray, out hit, rayLength)) 
+                    else if (direction.Equals(left) && (!isHit || isPlayer)) 
                         pos = new Vector3(position.x - rayLength * (int) player, position.y + height, position.z);
-                    else if (direction.Equals(back) && !Physics.Raycast(ray, out hit, rayLength)) 
+                    else if (direction.Equals(back) && (!isHit || isPlayer)) 
                         pos = new Vector3(position.x, position.y + height, position.z - rayLength * (int) player);
                     
                     if (pos != Vector3.zero) {

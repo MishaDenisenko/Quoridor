@@ -1,17 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CanvasButtons : MonoBehaviour {
     private Transform _buttonTransform;
+    private bool _isVsBot;
     
     private void Awake() {
         _buttonTransform = transform;
     }
 
+    // private void Update() {
+    //     if (isStart) _isVsBot = 
+    // }
+
     public void PlayGame() {
-        StartCoroutine(LoadScene("GameScene"));
+        _isVsBot = CheckBotButton.IsVsBot;
+        if (_isVsBot) StartCoroutine(LoadScene("BotGameScene"));
+        else StartCoroutine(LoadScene("GameScene"));
     }
     
     public void OpenHomeScene() {
