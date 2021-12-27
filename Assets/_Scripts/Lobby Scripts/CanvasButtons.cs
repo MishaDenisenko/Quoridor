@@ -12,13 +12,9 @@ public class CanvasButtons : MonoBehaviour {
         _buttonTransform = transform;
     }
 
-    // private void Update() {
-    //     if (isStart) _isVsBot = 
-    // }
-
     public void PlayGame() {
         _isVsBot = CheckBotButton.IsVsBot;
-        if (_isVsBot) StartCoroutine(LoadScene("BotGameScene"));
+        if (_isVsBot || SceneManager.GetActiveScene().name.Equals("BotGameScene")) StartCoroutine(LoadScene("BotGameScene"));
         else StartCoroutine(LoadScene("GameScene"));
     }
     
@@ -29,14 +25,14 @@ public class CanvasButtons : MonoBehaviour {
     public void SetPressedButton() {
         _buttonTransform.Rotate(0, 0, -5);
         if (SceneManager.GetActiveScene().name.Equals("Lobby")) _buttonTransform.localScale = new Vector3(0.8f, 0.8f, 1f);
-        else if (SceneManager.GetActiveScene().name.Equals("GameScene"))
+        else if (SceneManager.GetActiveScene().name.Equals("GameScene") || SceneManager.GetActiveScene().name.Equals("BotGameScene"))
             _buttonTransform.localScale = new Vector3(0.6f, 0.6f, 1f);
     }
 
     public void SetDefaultButton() {
         _buttonTransform.Rotate(0, 0, 5);
         if (SceneManager.GetActiveScene().name.Equals("Lobby")) _buttonTransform.localScale = new Vector3(1f, 1f, 1f);
-        else if (SceneManager.GetActiveScene().name.Equals("GameScene"))
+        else if (SceneManager.GetActiveScene().name.Equals("GameScene") || SceneManager.GetActiveScene().name.Equals("BotGameScene"))
             _buttonTransform.localScale = new Vector3(0.8f, 0.8f, 1f);
     }
 

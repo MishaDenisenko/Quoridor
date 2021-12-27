@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using _Scripts.Bot_Scene_Scripts;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlateController : MonoBehaviour {
     private bool _isRow;
@@ -30,26 +32,42 @@ public class PlateController : MonoBehaviour {
     }
 
     private void Update() {
-        if (GameController.Opponent == GameController.Player.FirstPlayer) {
-            _firstPlayer.GetComponent<PathFinder>().enabled = true;
-            _secondPlayer.GetComponent<PathFinder>().enabled = false;
-            _firstPlayer.GetComponent<PathFinder>().TryFind = true;
-            _isWay = _firstPlayer.GetComponent<PathFinder>().IsWay;
-        } 
-        else if (GameController.Opponent == GameController.Player.SecondPlayer) {
-            _firstPlayer.GetComponent<PathFinder>().enabled = false;
-            _secondPlayer.GetComponent<PathFinder>().enabled = true;
-            _secondPlayer.GetComponent<PathFinder>().TryFind = true;
-            _isWay = _secondPlayer.GetComponent<PathFinder>().IsWay;
+        if (SceneManager.GetActiveScene().name.Equals("BotGameScene")) {
+            if (_firstPlayer.GetComponent<BotOrPlayer>().PlayerType == BotOrPlayer.Type.Player) {
+                _secondPlayer.GetComponent<PathFinder>().enabled = true;
+                _secondPlayer.GetComponent<PathFinder>().TryFind = true;
+                _isWay = _secondPlayer.GetComponent<PathFinder>().IsWay;
+            }
+            else if (_secondPlayer.GetComponent<BotOrPlayer>().PlayerType == BotOrPlayer.Type.Player) {
+                _firstPlayer.GetComponent<PathFinder>().enabled = true;
+                _firstPlayer.GetComponent<PathFinder>().TryFind = true;
+                _isWay = _secondPlayer.GetComponent<PathFinder>().IsWay;
+            }
+        } else {
+            if (GameController.Opponent == GameController.Player.FirstPlayer) {
+                _firstPlayer.GetComponent<PathFinder>().enabled = true;
+                _secondPlayer.GetComponent<PathFinder>().enabled = false;
+                _firstPlayer.GetComponent<PathFinder>().TryFind = true;
+                _isWay = _firstPlayer.GetComponent<PathFinder>().IsWay;
+            } else if (GameController.Opponent == GameController.Player.SecondPlayer) {
+                _firstPlayer.GetComponent<PathFinder>().enabled = false;
+                _secondPlayer.GetComponent<PathFinder>().enabled = true;
+                _secondPlayer.GetComponent<PathFinder>().TryFind = true;
+                _isWay = _secondPlayer.GetComponent<PathFinder>().IsWay;
+            }
         }
-        if (!gameObject.GetComponent<PlateController>()._isPaste && (PlateIntersections.IsCrossed || !_onPosition) ||
-            (PlateIntersections.IsCrossed && !_onPosition) || !_isWay) {
-            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = new Color(_color.r, _color.g, _color.b, 0.5f);
+        if (!gameObject.GetComponent<PlateController>()._isPaste &&
+            (PlateIntersections.IsCrossed || !_onPosition) || (PlateIntersections.IsCrossed && !_onPosition) ||
+            !_isWay) {
+            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color =
+                new Color(_color.r, _color.g, _color.b, 0.5f);
             Position = null;
+        } else if (!gameObject.GetComponent<PlateController>()._isPaste && !PlateIntersections.IsCrossed &&
+                   _onPosition) {
+            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color =
+                new Color(_color.r, _color.g, _color.b, 1f);
         }
-        else if (!gameObject.GetComponent<PlateController>()._isPaste && !PlateIntersections.IsCrossed && _onPosition) {
-            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = new Color(_color.r, _color.g, _color.b, 1f);
-        }
+        
     }
 
     private void OnTriggerEnter(Collider other) {

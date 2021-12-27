@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlateIntersections : MonoBehaviour {
     private static bool _isCrossed;
@@ -10,6 +11,12 @@ public class PlateIntersections : MonoBehaviour {
     }
 
     private void OnTriggerStay(Collider other) {
+        if (other.transform.CompareTag("Plate")) {
+            _isCrossed = true;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other) {
         if (other.transform.CompareTag("Plate")) {
             _isCrossed = true;
         }

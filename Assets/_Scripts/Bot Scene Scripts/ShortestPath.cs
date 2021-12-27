@@ -9,20 +9,19 @@ namespace _Scripts.Bot_Scene_Scripts {
         public float height = 0.2f;
         public GameObject tops;
 
-        private bool _tryFind;
-        private bool _isWay = true;
-
-        public bool IsWay => _isWay;
-
-        public bool TryFind {
-            set => _tryFind = value;
-        }
+        // private bool _tryFind;
+        // private bool _isWay = true;
+        //
+        // public bool IsWay => _isWay;
+        //
+        // public bool TryFind {
+        //     set => _tryFind = value;
+        // }
 
         private Vector3 _position;
         private Vector3 _rayPosition;
         private Vector3 _pos;
         private GameObject[] _finishRow = new GameObject[9];
-        public GameObject[] Shortest { get; set; }
 
         public enum PlayerInitial {
             First = -1, Second = 1
@@ -50,71 +49,58 @@ namespace _Scripts.Bot_Scene_Scripts {
             }
         }
 
-        private void Update() {
-            // if (_tryFind) {
-            //     Vector3 position = transform.position;
-            //     _rayPosition = new Vector3(position.x, position.y + height, position.z);
-            //     RaycastHit hit;
-            //     Ray ray = new Ray(_rayPosition, Vector3.down);
-            //     Physics.Raycast(ray, out hit, rayLength);
-            //     if (hit.collider.tag.Equals("Vertex")) {
-            //         List<Vertex> path = IsPath(hit.collider.gameObject, Vector3.zero);
-            //         Shortest = FindShortest(path);
-            //         print(Shortest.Length + " ::: " + path.Count);
-            //         // foreach (Vertex passedVertex in path) {
-            //         //     passedVertex.VertexObject.GetComponent<Outline>().enabled = true;
-            //         //     passedVertex.VertexObject.GetComponent<Outline>().OutlineColor = Color.red;
-            //         // }
-            //         foreach (GameObject passedVertex in Shortest) {
-            //             passedVertex.GetComponent<Outline>().enabled = true;
-            //             passedVertex.GetComponent<Outline>().OutlineColor = Color.green;
-            //         }
-            //     }
-            //
-            //     _tryFind = false;
-            // }
-        }
-
         public GameObject[] FindShortest() {
             Vector3 position = transform.position;
             _rayPosition = new Vector3(position.x, position.y + height, position.z);
             Ray ray = new Ray(_rayPosition, Vector3.down);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 50);
-            Debug.DrawRay(_rayPosition, Vector3.down, Color.cyan, 50);
             List<Vertex> path = new List<Vertex>();
-            print(hit.collider.gameObject +"=");
             if (hit.collider.tag.Equals("Vertex")) {
                  path = IsPath(hit.collider.gameObject, Vector3.zero);
             }
             return FindShortest(path);
         }
+        
         private GameObject[] FindShortest(List<Vertex> path) {
-            List<Vertex> newPath = new List<Vertex>();
             int k = 0;
+            List<Vertex> newPath = new List<Vertex>();
             List<Vertex> tmpPath = new List<Vertex>();
-            List<Vertex> tmpPath2 = new List<Vertex>();
-            foreach (Vertex vertex in path) {
-                if (vertex.Directions.Length > 0) newPath.Add(vertex);
-            }
-            foreach (Vertex vertex in newPath) {
-                tmpPath.Add(vertex);
-                if (vertex.Directions.Length > 1) {
-                    foreach (Vector3 direction in vertex.Directions) {
-                        tmpPath2 = IsPath(vertex.VertexObject, direction);
-                        if (tmpPath2.Count + k < newPath.Count) {
-                            newPath = tmpPath2;
-                            foreach (Vertex v in tmpPath) {
-                                if (!newPath.Contains(v)) newPath.Add(v);
-                            }
+            List<Vertex> iterimPath = new List<Vertex>();
+            List<List<Vertex>> allWays = new List<List<Vertex>>();
+            while (k < path.Count - 1) {
+                Vertex vertex = path[k];
+                Vector3 position = vertex.VertexObject.transform.position;
+                _rayPosition = new Vector3(position.x, position.y + height, position.z);
+                Transform trnsf = vertex.VertexObject.transform;
+                Vector3 forward = trnsf.TransformDirection(Vector3.up) * (int) player;
+                Vector3 right = trnsf.TransformDirection(Vector3.right) * (int) player;
+                Vector3 left = trnsf.TransformDirection(Vector3.left) * (int) player;
+                Vector3 back = trnsf.TransformDirection(Vector3.down) * (int) player;
+                
+                Vector3[] directions = {forward, right, left, back};
+                
+                foreach (Vector3 direction in directions) {
+                    newPath = new List<Vertex>();
+                    tmpPath = IsPath(vertex.VertexObject, direction);
+                    if (tmpPath.Count > 0 && _finishRow.Contains(tmpPath[tmpPath.Count - 1].VertexObject)) {
+                        foreach (Vertex v in iterimPath) {
+                            newPath.Add(v);
                         }
-                    }
+                        foreach (Vertex v in tmpPath) {
+                            if (!newPath.Contains(v))newPath.Add(v);
+                        }
+                        if (newPath.Count > 0) allWays.Add(newPath);
+                    }   
                 }
+                
+                iterimPath.Add(vertex);
                 k++;
             }
-            GameObject[] shortWay = new GameObject[newPath.Count];
-            for (int i = 0; i < shortWay.Length; i++) {
-                shortWay[i] = newPath[i].VertexObject;
+            List<Vertex> shortest = allWays[0];
+            GameObject[] shortWay = new GameObject[shortest.Count];
+            for (int i = 0; i < shortest.Count; i++) {
+                shortWay[i] = shortest[i].VertexObject;
             }
             return shortWay;
         }
@@ -125,7 +111,11 @@ namespace _Scripts.Bot_Scene_Scripts {
             List<Vertex> passedVertices = new List<Vertex>();
             Vertex vertex;
             int index = 0;
-            while (!_finishRow.Contains(currentVertex) && isWay) {
+            while (isWay) {
+                if (_finishRow.Contains(currentVertex)) {
+                    passedVertices.Add(new Vertex(currentVertex));
+                    break;
+                } 
 
                 Vector3 position = currentVertex.transform.position;
                 _rayPosition = new Vector3(position.x, position.y + height, position.z);
@@ -142,30 +132,36 @@ namespace _Scripts.Bot_Scene_Scripts {
                 GameObject tempV = null;
                 
                 if (dir != Vector3.zero) {
+                    vertex = new Vertex(currentVertex);
+                    vertex.Directions = new[] {dir};
+                    passedVertices.Add(vertex);
                     Vector3 pos = new Vector3();
-                    // ray = new Ray(_rayPosition, dir);
+                    ray = new Ray(_rayPosition, dir);
                     // Vector3 pos = Vector3.zero;
-                    // bool isHit = Physics.Raycast(ray, out hit, rayLength);
-                    // bool isPlayer = hit.collider ? hit.collider.tag.Equals("Player") : false;
-                    if (dir.Equals(forward))
+                    bool isHit = Physics.Raycast(ray, out hit, rayLength);
+                    bool isPlayer = hit.collider ? hit.collider.tag.Equals("Player") : false;
+                    if (dir.Equals(forward) && (!isHit || isPlayer))
                         pos = new Vector3(position.x, position.y + height, position.z + rayLength * (int) player);
-                    else if (dir.Equals(right))
+                    else if (dir.Equals(right) && (!isHit || isPlayer))
                         pos = new Vector3(position.x + rayLength * (int) player, position.y + height, position.z);
-                    else if (dir.Equals(left))
+                    else if (dir.Equals(left) && (!isHit || isPlayer))
                         pos = new Vector3(position.x - rayLength * (int) player, position.y + height, position.z);
-                    else if (dir.Equals(back))
+                    else if (dir.Equals(back) && (!isHit || isPlayer))
                         pos = new Vector3(position.x, position.y + height, position.z - rayLength * (int) player);
 
+                    if (pos != Vector3.zero) {
+                        ray = new Ray(pos, Vector3.down);
+                        Physics.Raycast(ray, out hit, rayLength);
+                        tempV = hit.collider.tag.Equals("Vertex") ? hit.collider.gameObject : null;
+                    }
                     
-                    ray = new Ray(pos, Vector3.down);
-                    Physics.Raycast(ray, out hit, rayLength);
-                    tempV = hit.collider.tag.Equals("Vertex") ? hit.collider.gameObject : null;
-
                     if (tempV) {
                         currentVertex = tempV;
                         isRecursive = false;
-                        dir = Vector3.zero;
+                    } else {
+                        break;
                     }
+                    dir = Vector3.zero;
                 } else {
                     if (!isRecursive) vertex = new Vertex(currentVertex);
                     else vertex = passedVertices[index];
@@ -252,13 +248,6 @@ namespace _Scripts.Bot_Scene_Scripts {
                     }
                 }
             }
-
-            // foreach (Vertex passedVertex in passedVertices) {
-            //     // passedVertex.VertexObject.GetComponent<Outline>().enabled = true;
-            //     // passedVertex.VertexObject.GetComponent<Outline>().OutlineColor = Color.red;
-            //     print(passedVertex.VertexObject);
-            //     print(passedVertex.Directions.Length);
-            // }
             return passedVertices;
         }
     }

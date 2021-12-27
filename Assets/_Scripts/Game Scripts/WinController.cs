@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 public class WinController : MonoBehaviour {
     public GameObject firstPlayer;
     public GameObject secondPlayer;

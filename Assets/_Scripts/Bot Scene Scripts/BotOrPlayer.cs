@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _Scripts.Bot_Scene_Scripts {
     public class BotOrPlayer : MonoBehaviour {

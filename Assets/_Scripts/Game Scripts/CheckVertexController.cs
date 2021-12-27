@@ -109,7 +109,6 @@ public class CheckVertexController : MonoBehaviour {
         RaycastHit hit;
         foreach (Vector3 direction in directions) {
             Ray ray = new Ray(_rayPosition, direction);
-            // if (Physics.Raycast(ray, out hit, rayLength)) print(hit.collider.tag);
             if (Physics.Raycast(ray, out hit, rayLength) && hit.collider.tag.Equals("Plate")) {
                 if (direction == forward) {
                     verticesNumbers[0][0] = 0;
@@ -127,7 +126,6 @@ public class CheckVertexController : MonoBehaviour {
                     verticesNumbers[3][0] = 0;
                     verticesNumbers[3][1] = 0;
                 }
-                print(4);
             }
             else if (Physics.Raycast(ray, out hit, rayLength) && hit.collider.tag.Equals("Player")) {
                 Vector3 position = hit.transform.position;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Scripts.Bot_Scene_Scripts;
+using UnityEngine;
 
 public class MovePlates : MonoBehaviour {
     public GameObject bufflePrefab;
@@ -54,6 +55,7 @@ public class MovePlates : MonoBehaviour {
                     _bufflePlate.transform.GetComponent<PlateController>().enabled = false;
                     PlateController.Position = null;
                     GameController.PlateInstalled = true;
+                    PlayerController.PlateInstalled = true;
                     _movePlate = false;
                     _isCreate = false;
                 }
